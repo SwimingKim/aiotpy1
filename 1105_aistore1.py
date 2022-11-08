@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
         elif num == '2':
             count = int(input('구매할 상품 개수 입력: '))
-            need_price = store.price * count
+            need_price = store.get_price() * count
             amount = int(input(str(need_price) + ' 이상의 금액을 입력해 주세요: '))
             store.buy_item(count, amount)
 
