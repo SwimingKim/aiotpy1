@@ -106,15 +106,10 @@ def manager_product():
     store.set_product(product, int(count), int(price))
 
 def txt_to_store():
-    s_id = input('스토어 아이디 입력: ')
-    store = search_store(s_id)
-    text = "이름 : {}, 아이디: {}, 위치: {}, 재고: {}, 가격: {}".format(store.get_name(), store.get_id(), store.get_locate(), store.get_products(), store.get_prices())
-    return text
+    pass
 
 import json
 def store_to_json():
-    text = txt_to_store()
-    dict = json.dumps(text)
     pass
 
 if __name__ == '__main__':
@@ -143,11 +138,8 @@ if __name__ == '__main__':
         elif input1 == '5':
             manager_product()
         elif input1 == '6':
-            text = txt_to_store()
-            print(text)
-            pass
+            txt_to_store()
         elif input1 == '7':
             store_to_json()
-            pass
         else:
             print('존재하지 않는 명령어 입니다.')
