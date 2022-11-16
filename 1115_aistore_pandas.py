@@ -14,16 +14,18 @@ class AiStore:
         # try 문사용 가능
         # 쿼리후 개수로 파악 가능
         if p_id in self.inventory["p_id"].values:
-            index_list = (iv_df["p_id"] == p_id) & (iv_df["s_id"] == self.s_id)
-            iv_df.loc[index_list, "count"] += count
-            iv_df.loc[index_list, "price"] = price
+            self.inventory.loc[self.inventory["p_id"] == p_id, "count"] += count
+            self.inventory.loc[self.inventory["p_id"] == p_id, "price"] = price
         else:
-            iv_df.loc[len(iv_df)] = {
+            self.products_num += 1
+            df = self.inventory.copy()
+            df.loc[len(self.inventory)] = {
                 "p_id": p_id,
                 "count": count,
                 "price": price,
                 "s_id": self.s_id
             }
+            self.inventory = df
 
     def buy_product(self, p_id, count, amount):
         if not p_id in self.inventory["p_id"].values:
@@ -39,7 +41,9 @@ class AiStore:
             return
         changes = amount - total_price
         print("잔돈은 {}입니다".format(changes))
-        iv_df.loc[(iv_df["s_id"] == self.s_id) & (iv_df["p_id"] == p_id), "count"] -= count
+        df = self.inventory.copy()
+        df.loc[df["p_id"] == p_id, "count"] -= count
+        self.inventory = df
 
     def get_name(self):
         return self.name
@@ -54,7 +58,7 @@ class AiStore:
         return self.products_num
 
     def show_products(self, p_df):
-        print(p_df)
+        # print(p_df)
         for index, item in self.inventory.iterrows():
             print("상품명:{} -  가격:{} (재고{}) id:{}".format(p_df.loc[item["p_id"]]["product"], item["price"], item["count"], item["p_id"]))
 
@@ -66,8 +70,13 @@ class AiStore:
         return product['price'].iloc[0]
 
     def update_data(self, s_df, iv_df):
-        self.products_num = s_df[s_df["s_id"] == self.s_id].squeeze()["products_num"]
-        self.inventory = iv_df[iv_df["s_id"] == self.s_id]
+        s_df.loc[s_df["s_id"] == self.s_id, "products_num"] = self.products_num
+        for index, item in self.inventory.iterrows():
+            p_id = item["p_id"]
+            if iv_df[(iv_df["s_id"] == self.s_id) & (iv_df["p_id"] == p_id)].empty:
+                iv_df.loc[len(iv_df)] = item
+            else:
+                iv_df[(iv_df["s_id"] == self.s_id) & (iv_df["p_id"] == p_id)] = item
 
 def create_store():
     s_name = input('스토어 이름 입력: ')
@@ -120,6 +129,7 @@ def buy():
     print("필요한 금액은 {}입니다".format(total_price))
     price = input('가격 입력: ')
     store.buy_product(p_id, count, int(price))
+    store.update_data(s_df, iv_df)
 
 def manager_product():
     s_id = input('스토어 번호 입력: ')
@@ -132,6 +142,7 @@ def manager_product():
     count = input('재고 개수 입력: ')
     price = input('상품 가격 입력: ')
     store.set_product(p_id, int(count), int(price))
+    store.update_data(s_df, iv_df)
 
 def save_to_csv():
     s_df.to_csv("stores.csv", encoding="utf-8")
