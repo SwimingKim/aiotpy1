@@ -145,8 +145,8 @@ def manager_product():
     store.update_data(s_df, iv_df)
 
 def save_to_csv():
-    s_df.to_csv("stores.csv", encoding="utf-8")
-    iv_df.to_csv("inventory.csv", encoding="utf-8")
+    s_df.to_csv("stores.csv", encoding="utf-8", index=False)
+    iv_df.to_csv("inventory.csv", encoding="utf-8", index=False)
 
 import json
 def products_counts():
