@@ -14,18 +14,18 @@ class AiStore:
         # try 문사용 가능
         # 쿼리후 개수로 파악 가능
         if p_id in self.inventory["p_id"].values:
-            self.inventory.loc[self.inventory["p_id"] == p_id, "count"] += count
-            self.inventory.loc[self.inventory["p_id"] == p_id, "price"] = price
+            df = self.inventory.copy()
+            df.loc[df["p_id"] == p_id, "count"] += count
+            df.loc[df["p_id"] == p_id, "price"] = price
+            self.inventory = df
         else:
             self.products_num += 1
-            df = self.inventory.copy()
-            df.loc[len(self.inventory)] = {
+            self.inventory = pd.concat([self.inventory, pd.DataFrame([{
                 "p_id": p_id,
                 "count": count,
                 "price": price,
                 "s_id": self.s_id
-            }
-            self.inventory = df
+            }])], ignore_index=True)
 
     def buy_product(self, p_id, count, amount):
         if not p_id in self.inventory["p_id"].values:
@@ -157,12 +157,12 @@ def products_counts():
 if __name__ == '__main__':
 
     s_df = pd.read_csv('./stores.csv')
-    s_df.set_index("s_id")
+    s_df.set_index("s_id", inplace=False)
     print(s_df)
     p_df = pd.read_csv('./products.csv')
     p_df.set_index("p_id", inplace=True)
     print(p_df)
-    iv_df = pd.read_csv('./inventory.csv', index_col=False)
+    iv_df = pd.read_csv('./inventory.csv')
     print(iv_df)
 
     print('1 - 스토어 생성')
