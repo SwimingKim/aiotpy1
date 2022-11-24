@@ -63,8 +63,8 @@ class AiStore:
         for item in self.get_inventory().iloc:
             dict = {}
             dict["p_name"] = p_df[p_df["p_id"] == item["p_id"]].squeeze()["product"]
-            dict["price"] = item["price"]
-            dict["count"] = item["count"]
+            dict["price"] = int(item["price"])
+            dict["count"] = int(item["count"])
             dict["p_id"] = item["p_id"]
             menu.append(dict)
         # ~
