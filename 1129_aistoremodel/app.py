@@ -44,7 +44,7 @@ def manage(s_id = 'nan'):
         if s_id == 'nan':
             s_id = request.form['sId']
             # Products 전체 쿼리 (리스트)
-            products = ~
+            products = Products.query.all()
             return render_template('manage.html',
                                     s_id = s_id,
                                     inventory=get_menu(s_id),
@@ -56,7 +56,7 @@ def manage(s_id = 'nan'):
             count = int(request.form['count'])
             set_product(s_id, p_id, price, count)
             # Products 전체 쿼리 (리스트)
-            products = ~
+            products = Products.query.all()
             return render_template('manage.html',
                                     s_id = s_id,
                                     inventory = get_menu(s_id),
@@ -76,12 +76,12 @@ def board(s_id = 'nan'):
     if request.method == 'POST':
         s_id = request.form['sId']
         ai_store = db_session.get(AiStore, s_id)
-        return render_template('board.html', s_id = s_id, menu = get_menu(ai_store))
+        return render_template('board.html', s_id = s_id, menu = get_menu(ai_store.s_id))
 
     if s_id != 'nan':
         ai_store = db_session.get(AiStore, s_id)
         return render_template('board.html',
-                               s_id=s_id, menu = get_menu(ai_store))
+                               s_id=s_id, menu = get_menu(ai_store.s_id))
     else:
         return render_template('board.html',
                                s_id=s_id,)

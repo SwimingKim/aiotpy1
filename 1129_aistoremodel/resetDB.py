@@ -10,5 +10,8 @@ engine = create_engine('sqlite:///tmp/aistore.db', convert_unicode=True)
 
 s_df = pd.read_csv('./static/stores.csv')
 s_df.to_sql('stores', con=engine, if_exists='replace', index= False)
-~
+p_df = pd.read_csv('./static/products.csv')
+p_df.to_sql('products', con=engine, if_exists='replace', index=False)
+iv_df = pd.read_csv('./static/inventory.csv')
+iv_df.to_sql('inventory', con=engine, if_exists='replace', index=False)
 
