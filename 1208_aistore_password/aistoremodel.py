@@ -1,6 +1,9 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, select
 from database import Base, db_session
 from sqlalchemy.orm import relationship
+from sqlalchemy_utils import PasswordType, force_auto_coercion
+
+force_auto_coercion()
 
 class AiStore(Base):
     __tablename__ = 'stores'
@@ -8,12 +11,17 @@ class AiStore(Base):
     name = Column(String(20))
     locate = Column(String(30))
     products_num = Column(Integer) # 숫자형 컬럼 생성
+    password = Column(PasswordType(
+        schemes=["pbkdf2_sha512", "md5_crypt"],
+        deprecated=["md5_crypt"]
+    ))
 
-    def __init__(self, s_id, name, locate):
+    def __init__(self, s_id, name, locate, password):
         self.s_id = s_id
         self.name = name
         self.locate = locate
         self.products_num = 0
+        self.password = password
 
     def add_product(self):
         self.products_num += 1
@@ -45,11 +53,11 @@ class Inventory(Base):
         self.count -= count
 
 
-def create_store(s_id, s_name, locate):
+def create_store(s_id, s_name, locate, password):
     # s_id 가 존재 하지 않는 경우만 AiStore 인스턴스 생성후 데이터베이스에 추가
     # 커밋하여 데이터베이스 적용
     if db_session.get(AiStore, s_id) is None:
-        store = AiStore(s_id, s_name, locate)
+        store = AiStore(s_id, s_name, locate, password)
         db_session.add(store)
         db_session.commit()
 

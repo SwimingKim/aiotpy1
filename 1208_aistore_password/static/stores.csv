@@ -1,4 +1,4 @@
-s_id,name,locate,products_num
-s1,용산점,용산,6
-s2,강남점,강남,3
-s3,강북점,강북,4
+s_id,name,locate,products_num,password
+s1,용산점,용산,6,s1p
+s2,강남점,강남,3,s2p
+s3,강북점,강북,4,s3p

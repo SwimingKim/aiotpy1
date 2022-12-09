@@ -24,7 +24,8 @@ def sregister():
         s_id = request.form['sId']
         s_name = request.form['sName']
         locate = request.form['locate']
-        create_store(s_id, s_name, locate)
+        password = request.form["sPassword"]
+        create_store(s_id, s_name, locate, password)
         return redirect('/')
 
     return render_template('sregister.html')
@@ -43,6 +44,11 @@ def manage(s_id = 'nan'):
     if request.method == 'POST':
         if s_id == 'nan':
             s_id = request.form['sId']
+            password = request.form['sPassword']
+            ai_store = db_session.get(AiStore, s_id)
+            if ai_store == None or ai_store.password != password:
+                return render_template("manage.html", s_id='nan')
+
             # Products 전체 쿼리 (리스트)
             products = Products.query.all()
             return render_template('manage.html',
@@ -75,16 +81,19 @@ def board(s_id = 'nan'):
 
     if request.method == 'POST':
         s_id = request.form['sId']
+        password = request.form['sPassword']
+        ai_store = db_session.get(AiStore, s_id)
+        if ai_store == None or ai_store.password != password:
+            return render_template("board.html", s_id='nan')
+
         ai_store = db_session.get(AiStore, s_id)
         return render_template('board.html', s_id = s_id, menu = get_menu(ai_store.s_id))
 
     if s_id != 'nan':
         ai_store = db_session.get(AiStore, s_id)
-        return render_template('board.html',
-                               s_id=s_id, menu = get_menu(ai_store.s_id))
+        return render_template('board.html', s_id=s_id, menu = get_menu(ai_store.s_id))
     else:
-        return render_template('board.html',
-                               s_id=s_id,)
+        return render_template('board.html', s_id=s_id,)
 
 @app.route("/buy/<s_id>/<p_id>", methods=['POST', 'GET'])
 def buy(s_id, p_id):
